@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
   s.description  = <<-DESC
-  ZBarSDK
+  ZBarSDK  ZBarSDK  ZBarSDK  ZBarSDK  ZBarSDK  ZBarSDK
                    DESC
 
   s.homepage     = "http://zbar.sourceforge.net/"
@@ -143,7 +143,7 @@ Pod::Spec.new do |s|
   #  you can include multiple dependencies to ensure it works.
 
   s.requires_arc = false
-  s.prefix_header_file = "iphone/include/prefix.pch",
+  s.prefix_header_file = "iphone/include/prefix.pch"
   s.compiler_flags = "-w",
   s.xcconfig = {
     "EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*][arch=*]" => "ZBarReaderViewImpl_Simulator.m",
