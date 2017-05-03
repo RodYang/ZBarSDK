@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   #  summary should be tweet-length, and the description more in depth.
   #
 
-  s.name         = "ZBar"
+  s.name         = "ZBarSDK"
   s.version      = "0.10"
   s.summary      = "Clone of the mercurial repository http://zbar.hg.sourceforge.net:8000/hgroot/zbar/zbar"
 
