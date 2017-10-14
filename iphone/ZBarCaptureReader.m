@@ -65,7 +65,7 @@ enum {
     if(!self)
         return(nil);
     
-    [NSTimer ez_scheduledTimerWithTimeInterval:1 block:^{
+    [NSTimer ez_scheduledTimerWithTimeInterval:0.5 block:^{
         self.canSendNotification = YES;
     } repeats:YES];
 
