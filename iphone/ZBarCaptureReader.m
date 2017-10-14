@@ -28,6 +28,7 @@
 #import <ZBarSDK/ZBarCaptureReader.h>
 #import <ZBarSDK/ZBarImageScanner.h>
 #import "ZBarCVImage.h"
+#import "NSTimer+Extension.h"
 
 #define MODULE ZBarCaptureReader
 #import "debug.h"
@@ -38,6 +39,12 @@ enum {
     PAUSED = 2,
     CAPTURE = 4,
 };
+
+@interface ZBarCaptureReader ()
+/** 是否允许发送通知 */
+@property (nonatomic, assign) BOOL canSendNotification;
+
+@end
 
 @implementation ZBarCaptureReader
 
@@ -57,6 +64,10 @@ enum {
     self = [super init];
     if(!self)
         return(nil);
+    
+    [NSTimer ez_scheduledTimerWithTimeInterval:1 block:^{
+        self.canSendNotification = YES;
+    } repeats:YES];
 
     t_fps = t_frame = timer_now();
     enableCache = YES;
@@ -243,6 +254,21 @@ enum {
   didOutputSampleBuffer: (CMSampleBufferRef) samp
          fromConnection: (AVCaptureConnection*) conn
 {
+    if (self.canSendNotification) {
+        CFDictionaryRef metadataDict = CMCopyDictionaryOfAttachments(NULL, samp, kCMAttachmentMode_ShouldPropagate);
+        NSDictionary *metadata = [[NSMutableDictionary alloc] initWithDictionary:(__bridge NSDictionary *)metadataDict];
+        CFRelease(metadataDict);
+        NSDictionary *exifMetadata = [[metadata objectForKey:(NSString *)kCGImagePropertyExifDictionary] mutableCopy];
+        // 环境亮度越大brightnessValue值越大
+        float brightnessValue = [[exifMetadata objectForKey:(NSString *)kCGImagePropertyExifBrightnessValue] floatValue];
+        
+        NSDictionary *dict = @{@"brightness" : @(brightnessValue)};
+        NSNotification *notification =[NSNotification notificationWithName:@"brightnessNotification" object:nil userInfo:dict];
+        [[NSNotificationCenter defaultCenter] postNotification:notification];
+        self.canSendNotification = NO;
+    }
+
+    
     // queue is apparently not flushed when stopping;
     // only process when running
     uint32_t _state = OSAtomicOr32Barrier(0, &state);
